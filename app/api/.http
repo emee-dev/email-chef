@@ -1,0 +1,80 @@
+
+
+# Get all email msgs
+GET http://localhost:3000/api
+Content-Type: application/json
+
+
+### Nylas auth
+POST http://localhost:3000/api/nylas/generate-auth-url
+Content-Type: application/json
+
+{
+    "email_address": "emmanuelajike2000@gmail.com", 
+    "success_url": "/success"
+}
+
+
+### Oauth
+POST https://5vmtkftl-3000.uks1.devtunnels.ms/api/oauth/exchange?code=123
+Content-Type: application/json
+
+{
+  "ema": "ee"
+}
+
+
+# ### Demo
+# POST https://flat-drinks-tan.loca.lt/api/oauth/exchange
+# Accept: application/json'
+
+# "Hello"
+
+# ### D
+# curl --request POST \
+#      --url https://api4.unipile.com:13430/api/v1/hosted/accounts/link \
+#      --header 'X-API-KEY: QFqOOfsk.g73L3Qs29pZ5ExZq+hvXmhA/MosYzOJjmkfxaC9pePk=' \
+#      --header 'accept: application/json' \
+#      --header 'content-type: application/json' \
+#      --data '
+# {
+#   "type": "create",
+#   "providers": ["GOOGLE"],
+#   "api_url": "https://api4.unipile.com:13430",
+#   "expiresOn": "2025-04-21T12:00:00.701Z",
+#   "notify_url": "https://webhook.site/78331e27-12e3-44f5-b32c-6d15279e92c4",
+#   "name": "user_123abc",
+#   "success_redirect_url": "http://localhost:3000"
+# }
+# '
+### D
+curl --request POST \
+     --url https://api4.unipile.com:13430/api/v1/hosted/accounts/link \
+     --header 'X-API-KEY: QFqOOfsk.g73L3Qs29pZ5ExZq+hvXmhA/MosYzOJjmkfxaC9pePk=' \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --data '
+{
+  "type": "create",
+  "providers": ["GOOGLE"],
+  "api_url": "https://api4.unipile.com:13430",
+  "expiresOn": "2025-04-21T12:00:00.701Z",
+  "notify_url": "https://5vmtkftl-3000.uks1.devtunnels.ms/api/oauth/exchange",
+  "name": "user_123abc",
+  "success_redirect_url": "http://localhost:3000"
+}
+'
+
+### Unipile Hosted Auth
+POST http://localhost:3000/api/unipile/auth
+Content-Type: application/json
+
+
+
+### Webhook
+POST https://typedwebhook.tools/webhook/326f09db-e5b4-49af-8bc2-c9125f564b81
+Content-Type: application/json
+
+{
+  "data": "emee"
+}
