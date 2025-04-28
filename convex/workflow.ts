@@ -3,9 +3,17 @@ import { workflow } from ".";
 import { api, internal } from "./_generated/api";
 import { mutation } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { SubscriptionEmailObject } from "./utils";
 
 export const kickoffWebhookWorkflow = mutation({
-  args: { email_html: v.string(), account_id: v.string(), subject: v.string() },
+  args: {
+    email_html: v.string(),
+    account_id: v.string(),
+    subject: v.string(),
+    sender_email: v.string(),
+    sender_name: v.string(),
+    email_plain_text: v.string(),
+  },
   handler: async (ctx, args) => {
     const titleGenerationWorkflowId = Math.random()
       .toString(36)
@@ -19,6 +27,9 @@ export const kickoffWebhookWorkflow = mutation({
         account_id: args.account_id,
         email_html: args.email_html,
         subject: args.subject,
+        sender_email: args.sender_email,
+        sender_name: args.sender_name,
+        email_plain_text: args.email_plain_text,
       }
     );
 
@@ -34,29 +45,15 @@ type User = {
   userId: Id<"users">;
 };
 
-export type SubscriptionEmailObject = {
-  userId: string;
-  service_name: string; // ex: "Netflix"
-  service_url: string; // ex: "https://www.netflix.com"
-  icon_url?: string; // optional: use favicon as fallback
-  billing_cycle?: "monthly" | "yearly" | "weekly" | string;
-  plan?: string; // ex: "Premium", "Basic Plan"
-  amount?: number; // ex: 9.99 (stored as number)
-  currency?: string; // ex: "USD", "EUR"
-  renewal_date?: string; // ISO date if parseable
-  payment_method?: string; // ex: "Visa ending in 1234"
-  email_subject: string; // raw subject
-  email_body: string; // raw or cleaned body
-  email_received_at: string; // ISO timestamp
-  tags?: string[]; // ex: ["renewal", "invoice", "auto-renew"]
-};
-
 export const handleEmailWorkflow = workflow.define({
   args: {
     workflowId: v.string(),
     account_id: v.string(),
     email_html: v.string(),
     subject: v.string(),
+    sender_email: v.string(),
+    sender_name: v.string(),
+    email_plain_text: v.string(),
   },
   handler: async (step, args) => {
     const user: User | null = await step.runQuery(api.integrations.getUserId, {
@@ -66,6 +63,14 @@ export const handleEmailWorkflow = workflow.define({
     if (!user) {
       throw new Error("User not found, exiting workflow.");
     }
+
+    // It sort of helps in categorizing emails
+    const userDefinedCategories = await step.runQuery(
+      api.webhook.listCategorySettings,
+      {
+        userId: user.userId,
+      }
+    );
 
     const { isSubscription }: { isSubscription: boolean } =
       await step.runAction(internal.agent.isSubscription, {
@@ -79,8 +84,11 @@ export const handleEmailWorkflow = workflow.define({
           email_html: args.email_html,
           subject: args.subject,
           userId: user.userId,
+          sender_email: args.sender_email,
         }
       );
+
+      // Categorize Email
 
       await step.runMutation(api.subscriptions.create, subscription);
       await step.runMutation(api.webhook.storeDomainAnalytics, {
@@ -90,9 +98,19 @@ export const handleEmailWorkflow = workflow.define({
     }
 
     // TODO Classify email and store as analytics
+    const result = await step.runAction(internal.agent.categorizeEmail, {
+      email_text: args.email_plain_text,
+      user_categories: userDefinedCategories,
+    });
+
+    await step.runMutation(api.webhook.storeCategoryAnalytics, {
+      emailId: args.sender_email, // email of the sender
+      title: result.category,
+      userId: user.userId,
+    });
 
     // TODO execute user stored rules/prompts
-    await step.runQuery(api.webhook.listRules, {
+    const rules = await step.runQuery(api.webhook.listRules, {
       userId: user.userId,
     });
 

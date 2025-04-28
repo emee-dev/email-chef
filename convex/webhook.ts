@@ -183,6 +183,20 @@ export const storeCategoryAnalytics = mutation({
   },
 });
 
+export const listCategorySettings = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const rules = await ctx.db
+      .query("settings")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .first();
+
+    return rules?.categories || [];
+  },
+});
+
 export const listCategoryAnalytics = query({
   args: {
     userId: v.string(),

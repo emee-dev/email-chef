@@ -14,6 +14,7 @@ import type * as http from "../http.js";
 import type * as index from "../index.js";
 import type * as integrations from "../integrations.js";
 import type * as subscriptions from "../subscriptions.js";
+import type * as utils_index from "../utils/index.js";
 import type * as webhook from "../webhook.js";
 import type * as workflow from "../workflow.js";
 
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   index: typeof index;
   integrations: typeof integrations;
   subscriptions: typeof subscriptions;
+  "utils/index": typeof utils_index;
   webhook: typeof webhook;
   workflow: typeof workflow;
 }>;
