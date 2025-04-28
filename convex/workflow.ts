@@ -7,11 +7,13 @@ import { SubscriptionEmailObject } from "./utils";
 
 export const kickoffWebhookWorkflow = mutation({
   args: {
-    email_html: v.string(),
-    account_id: v.string(),
     subject: v.string(),
-    sender_email: v.string(),
+    email_id: v.string(),
+    account_id: v.string(),
+    email_html: v.string(),
+    provider_id: v.string(),
     sender_name: v.string(),
+    sender_email: v.string(),
     email_plain_text: v.string(),
     emailIdentifier: v.string(), // for interacting with unipile API
   },
@@ -24,12 +26,14 @@ export const kickoffWebhookWorkflow = mutation({
       ctx,
       internal.workflow.handleEmailWorkflow,
       {
-        workflowId: titleGenerationWorkflowId,
-        account_id: args.account_id,
-        email_html: args.email_html,
         subject: args.subject,
-        sender_email: args.sender_email,
+        email_id: args.email_id,
+        email_html: args.email_html,
+        account_id: args.account_id,
+        provider_id: args.provider_id,
         sender_name: args.sender_name,
+        sender_email: args.sender_email,
+        workflowId: titleGenerationWorkflowId,
         email_plain_text: args.email_plain_text,
       }
     );
@@ -48,6 +52,8 @@ type User = {
 
 export const handleEmailWorkflow = workflow.define({
   args: {
+    email_id: v.string(),
+    provider_id: v.string(),
     workflowId: v.string(),
     account_id: v.string(),
     email_html: v.string(),
@@ -63,6 +69,10 @@ export const handleEmailWorkflow = workflow.define({
 
     if (!user) {
       throw new Error("User not found, exiting workflow.");
+    }
+
+    if (!user.email) {
+      throw new Error("User email not found, exiting workflow.");
     }
 
     // It sort of helps in categorizing emails
@@ -82,20 +92,21 @@ export const handleEmailWorkflow = workflow.define({
       const subscription: SubscriptionEmailObject = await step.runAction(
         internal.agent.emailToObject,
         {
-          email_html: args.email_html,
-          subject: args.subject,
           userId: user.userId,
+          subject: args.subject,
+          email_html: args.email_html,
           sender_email: args.sender_email,
         }
       );
 
       // Categorize Email
-
-      await step.runMutation(api.subscriptions.create, subscription);
-      await step.runMutation(api.webhook.storeDomainAnalytics, {
-        userId: user.userId,
-        service_url: subscription.service_url,
-      });
+      await Promise.all([
+        step.runMutation(api.subscriptions.create, subscription),
+        step.runMutation(api.webhook.storeDomainAnalytics, {
+          userId: user.userId,
+          service_url: subscription.service_url,
+        }),
+      ]);
     }
 
     // TODO Classify email and store as analytics
@@ -115,56 +126,15 @@ export const handleEmailWorkflow = workflow.define({
       userId: user.userId,
     });
 
-    // const transcript: string = await step.runAction(
-    //   internal.transcripts.getYoutubeTranscript,
-    //   {
-    //     url: args.url,
-    //   }
-    // );
-
-    // const summary: string = await step.runAction(
-    //   internal.transcripts.generateSummary,
-    //   {
-    //     transcript: transcript,
-    //   }
-    // );
-
-    // const titlePool: string[][] = await Promise.all([
-    //   step.runAction(internal.agents.storyTellingAgent, {
-    //     summary: summary,
-    //   }),
-    //   step.runAction(internal.agents.theoAgent, {
-    //     summary: summary,
-    //   }),
-    //   step.runAction(internal.agents.dataAgent, {
-    //     summary: summary,
-    //   }),
-    //   step.runAction(internal.agents.questionAgent, {
-    //     summary: summary,
-    //   }),
-    //   step.runAction(internal.agents.howToAgent, {
-    //     summary: summary,
-    //   }),
-    //   step.runAction(internal.agents.listicleAgent, {
-    //     summary: summary,
-    //   }),
-    // ]);
-
-    // const allTitles = titlePool.flat();
-
-    // const reviews = (
-    //   await Promise.all(
-    //     allTitles.map((title) =>
-    //       step.runAction(internal.reviewers.engagementReviewer, {
-    //         title: title,
-    //         summary: summary,
-    //         workflowId: args.workflowId,
-    //       })
-    //     )
-    //   )
-    // ).filter((review) => review !== undefined) as ReviewType[];
-
-    // let rewrites = 0;
-    // let currentReviews: typeof reviews = [...reviews];
+    await step.runAction(api.agent.aiAutomation, {
+      email_id: args.email_id,
+      account_id: args.account_id,
+      provider_id: args.provider_id,
+      sender_email: user.email as string,
+      email_subject: args.subject,
+      email_content: args.email_plain_text,
+      recipient_email: args.sender_email,
+      prompts: rules.map((rule) => rule.value),
+    });
   },
 });

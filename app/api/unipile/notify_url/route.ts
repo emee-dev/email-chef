@@ -41,7 +41,7 @@ export const POST = async (req: Request) => {
     // Not validated so it could be anything
     const userEmail = data.connection_params.mail.id;
 
-    await fetchMutation(api.integrations.create, {
+    const result = await fetchMutation(api.integrations.create, {
       userId: userId as Id<"users">,
       accountId: unipileAccountId,
       email: userEmail,

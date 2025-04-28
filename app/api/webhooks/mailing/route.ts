@@ -1,19 +1,8 @@
 import { api } from "@/convex/_generated/api";
-import { DataModel } from "@/convex/_generated/dataModel";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { fetchMutation, fetchQuery } from "convex/nextjs";
+import { fetchMutation } from "convex/nextjs";
 import { NextRequest } from "next/server";
-import { emailToObject, isSubscriptionEmail } from "./utils";
-
-type StoredRules = DataModel["settings"]["document"]["ai_rules"];
 
 export const dynamic = "force-dynamic";
-
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-});
-
-const model = google("gemini-1.5-pro");
 
 interface UnipileIncomingEmail {
   email_id: string;
@@ -36,22 +25,22 @@ interface UnipileIncomingEmail {
   bcc_attendees: [];
   cc_attendees: [];
   reply_to_attendees: [];
-  provider_id: '{"message_id":"<D8.08.07528.0034A846@unipile.com>","uid":"AQMkADAwATM3ZmYAZS04YjYyLTkzMwA4LTAwAi0wMAoARgAAA6SPCWnzzEdJj0W3b32H3c8HAPXMsqSCUH9FpzZzxeMbKMQAAAIBDAAAAPXMsqSCUH9FpzZzxeMbKMQABHfkN3EAAAA="}';
-  message_id: "<D8.08.07528.0034A846@unipile.com>";
-  has_attachments: false;
-  subject: "Hello";
-  body: "Hello World";
+  provider_id: string;
+  message_id: string;
+  has_attachments: boolean;
+  subject: string;
+  body: string;
   body_plain: "";
   attachments: [];
-  folders: ["Inbox"]; // where it is located
-  role: "inbox";
+  folders: string[]; // where it is located
+  role: string;
   read_date: null;
   is_complete: false;
   in_reply_to: {
-    message_id: "<DB9P251MB0524C459227C8A2AF82CC523C21A2@unipile.com>";
-    id: "GxwlUMaZTHefegva16XcWw";
+    message_id: string;
+    id: string;
   };
-  tracking_id: "Z-4Nx5bMR86b9NVCloU1gg";
+  tracking_id: string;
   origin: "unipile" | "external"; // "external"
 }
 
@@ -130,7 +119,9 @@ export const POST = async (req: NextRequest) => {
     const workflow = await fetchMutation(api.workflow.kickoffWebhookWorkflow, {
       subject: email.subject,
       email_html: email.body,
+      email_id: email.email_id,
       account_id: email.account_id,
+      provider_id: email.provider_id,
       emailIdentifier: email.email_id,
       email_plain_text: email.body_plain,
       sender_email: email.from_attendee.identifier,
