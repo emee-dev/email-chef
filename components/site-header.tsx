@@ -1,16 +1,14 @@
 "use client";
 
-import { UnipileContext } from "@/provider/unipile-context";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UnipileContext } from "@/provider/unipile-context";
 import { Mails } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
 export function SiteHeader() {
   const unipile = useContext(UnipileContext);
-  const router = useRouter();
 
   const getHostedAuth = async () => {
     const req = await fetch("/api/unipile/hosted_auth", {
@@ -31,7 +29,7 @@ export function SiteHeader() {
       throw new Error("No redirect url returned from server");
     }
 
-    router.push(res.url);
+    window.location.assign(res.url);
   };
 
   return (
