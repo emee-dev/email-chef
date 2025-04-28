@@ -84,3 +84,20 @@ export function getVisibleText(element: any, $: cheerio.CheerioAPI): string {
     .filter(Boolean)
     .join("\n");
 }
+
+export type SubscriptionEmailData = {
+  userId: string;
+  service_name: string; // ex: "Netflix"
+  service_url: string; // ex: "https://www.netflix.com"
+  icon_url?: string; // optional: use favicon as fallback
+  billing_cycle?: "monthly" | "yearly" | "weekly" | string;
+  plan?: string; // ex: "Premium", "Basic Plan"
+  amount?: number; // ex: 9.99 (stored as number)
+  currency?: string; // ex: "USD", "EUR"
+  renewal_date?: string; // ISO date if parseable
+  payment_method?: string; // ex: "Visa ending in 1234"
+  email_subject: string; // raw subject
+  email_body: string; // raw or cleaned body
+  email_received_at: string; // ISO timestamp
+  tags?: string[]; // ex: ["renewal", "invoice", "auto-renew"]
+};

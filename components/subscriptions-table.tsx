@@ -28,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { SubscriptionEmailData } from "@/lib/utils";
 import {
   DndContext,
   KeyboardSensor,
@@ -514,11 +515,7 @@ export function SubscriptionTable({
   );
 }
 
-function ExpandedRow({
-  subscription,
-}: {
-  subscription: SubscriptionEmailData;
-}) {
+function ExpandedRow({ subscription }: { subscription: SubscriptionEmailData }) {
   // Format dates
   const formatDate = () => {
     if (
