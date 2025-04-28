@@ -1,13 +1,13 @@
-[![](apps/web/app/opengraph-image.png)](https://www.getinboxzero.com)
+<!-- [![](apps/web/app/opengraph-image.png)](https://www.getinboxzero.com) -->
 
 <p align="center">
-  <a href="https://www.getinboxzero.com">
+  <a href="https://email-chef.vercel.app/">
     <h1 align="center">EmailChef - AI Email Assistant</h1>
   </a>
   <p align="center">
     Open source email automation and subscription tracking via emails.
     <br />
-    <a href="#">Website</a>
+    <a href="https://email-chef.vercel.app/">Website</a>
     ·
     <a href="#">Discord</a>
     ·
@@ -17,14 +17,15 @@
 
 ## About
 
-There are two parts to EmailChef:
+There are three parts to EmailChef:
 
 1. An AI email assistant that helps you automate your email.
 2. Open source email subscription tracker tool (builds a timeline of your paid subscriptions).
+3. Advanced AI workflow using convex workflow engine.
 
 Deploy with a single click.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Felie222%2Finbox-zero&env=UNIPILE_API_TOKEN,UNIPILE_DSN,UNIPILE_NOTIFY_URL,UNIPILE_SUCCESS_REDIRECT_URL,CONVEX_DEPLOYMENT,NEXT_PUBLIC_CONVEX_URL)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Femee-dev%2Femail-chef&env=UNIPILE_API_TOKEN,UNIPILE_DSN,UNIPILE_NOTIFY_URL,UNIPILE_SUCCESS_REDIRECT_URL,CONVEX_DEPLOYMENT,NEXT_PUBLIC_CONVEX_URL&envDescription=Unipile%20API%20Token%2CUnipile%20DSN%20endpoint%2CUnipile%20Notify%20Webhook%20URL%2CUnipile%20Success%20Redirect%20URL%2CConvex%20Deployment%20ID%2CConvex%20Public%20URL)
 
 ## Features
 
@@ -33,9 +34,13 @@ Deploy with a single click.
 - **Cold Email Blocker:** Automatically block (trash) cold emails.
 - **Email Analytics:** Track your email activity with daily, weekly, and monthly stats.
 
-## Demo Video
+## Demo
 
 [![Email Chef demo](/video-thumbnail.png)](#)
+
+[Chef link](https://chef.show/e8c7f4)
+
+[Vercel deployment](https://email-chef.vercel.app/)
 
 ## Built with
 
@@ -45,6 +50,7 @@ Deploy with a single click.
 - [Convex chef](https://www.prisma.io/)
 - [Convex](https://convex.dev/)
 - [Convex Workflows](https://www.convex.dev/components/workflow)
+- [Google Gemini](https://aistudio.google.com/apikey)
 
 ### Contributing to the project
 
@@ -65,25 +71,37 @@ The external services that are required are:
 
 You also need to set an LLM, but you can use a local one too:
 
-- [OpenAI](https://platform.openai.com/api-keys)
 - Google Gemini
-- Ollama (local)
 
 We use Convex for the database.
 
 ### Environment variables
 
-Set the environment variables in the newly created `.env`. You can see a list of required variables in: `apps/web/env.ts`.
+Set the environment variables in the`.env.local`. You can see a list of required variables in: `.env.example`.
 
 The required environment variables:
 
-- `UNIPILE_API_TOKEN` -- can be copied from the Unipile dashboard.
-- `UNIPILE_DSN` -- Can be copied from the Unipile dashboard and it is in the form of `apixxx.xxxx.xxx` [here]()
-- `UNIPILE_NOTIFY_URL` -- Unipile hosted auth webhook. More info [here]()
-- `UNIPILE_SUCCESS_REDIRECT_URL` -- Unipile hosted auth on success redirect callback.
-- `NEXT_PUBLIC_CONVEX_URL` -- Can be copied from the Convex dashboard
+### Unipile
+
+- `UNIPILE_API_TOKEN`  
+  Can be copied from the [Unipile dashboard](https://dashboard.unipile.com/access-tokens).
+- `UNIPILE_DSN`  
+  Can be copied from the Unipile dashboard. It is in the form of `apixxx.xxxx.xxx`.
+- `UNIPILE_NOTIFY_URL`: Unipile hosted auth webhook URL.
+- `UNIPILE_SUCCESS_REDIRECT_URL`: URL to redirect after successful Unipile authentication.
+- `UNIPILE_NOTIFY_URL`: (can be the same as `UNIPILE_SUCCESS_REDIRECT_URL` just base URL without paths).
+
+### Convex
+
+- `NEXT_PUBLIC_CONVEX_URL`  
+  Can be copied from the Convex dashboard.
 - `CONVEX_DEPLOYMENT`
 - `CONVEX_DEPLOY_KEY`
+
+### Gemini
+
+- `GOOGLE_GENERATIVE_AI_API_KEY`  
+  Obtain from [Google AI Studio](https://aistudio.google.com/apikey).
 
 To sync your functions to convex:
 
