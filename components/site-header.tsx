@@ -1,19 +1,31 @@
 "use client";
 
+import { UnipileContext } from "@/provider/unipile-context";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { UnipileContext } from "@/provider/unipile-context";
 import { Mails } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useAuthToken } from "@convex-dev/auth/react";
 
 export function SiteHeader() {
   const unipile = useContext(UnipileContext);
+  const token = useAuthToken();
 
   const getHostedAuth = async () => {
+    if (!token) {
+      console.error("JWT not found");
+      return;
+    }
+
+    const jwt = jwtDecode(token);
+    const userId = jwt.sub?.split("|").at(0) as string;
+
     const req = await fetch("/api/unipile/hosted_auth", {
       method: "POST",
-      body: JSON.stringify({ userId: unipile.userId }),
+      body: JSON.stringify({ userId: userId }),
       headers: {
         "Content-Type": "application/json",
       },
