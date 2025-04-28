@@ -13,6 +13,7 @@ export const kickoffWebhookWorkflow = mutation({
     sender_email: v.string(),
     sender_name: v.string(),
     email_plain_text: v.string(),
+    emailIdentifier: v.string(), // for interacting with unipile API
   },
   handler: async (ctx, args) => {
     const titleGenerationWorkflowId = Math.random()

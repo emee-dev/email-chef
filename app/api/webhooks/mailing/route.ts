@@ -18,7 +18,7 @@ const model = google("gemini-1.5-pro");
 interface UnipileIncomingEmail {
   email_id: string;
   account_id: string;
-  event: "mail_received" | "mail_sent";
+  event: "mail_received";
   webhook_name: string;
   date: string;
   from_attendee: {
@@ -58,58 +58,91 @@ interface UnipileIncomingEmail {
 /**
  * Allows us to recieve incoming emails via Unipile webhook notification.
  */
+// export const POST = async (req: NextRequest) => {
+//   try {
+//     const emailPayload = (await req.json()) as UnipileIncomingEmail;
+
+//     const unipileAccountId = emailPayload.account_id;
+
+//     const user = await fetchQuery(api.integrations.getUserId, {
+//       accountId: unipileAccountId,
+//     });
+
+//     if (!user) {
+//       return Response.json(
+//         { message: "Unable to process this email" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // 2. Handle Subcription related emails
+//     const { isSubscription } = await isSubscriptionEmail({
+//       email_html: emailPayload.body,
+//       model,
+//     });
+
+//     if (isSubscription) {
+//       const subscription = await emailToObject({
+//         model,
+//         email_html: emailPayload.body,
+//         subject: emailPayload.subject,
+//         userId: user.userId,
+//       });
+
+//       // store subscription
+//       await fetchMutation(api.subscriptions.create, subscription);
+
+//       // Analytics
+//       const serviceUrl = subscription.service_url;
+
+//       const storeDomain = await fetchMutation(
+//         api.webhook.storeDomainAnalytics,
+//         {
+//           service_url: serviceUrl,
+//           userId: user.userId,
+//         }
+//       );
+//     }
+
+//     // 3. Execute user defined rules on the email
+//     const storedRules = await fetchQuery(api.webhook.listRules, {
+//       userId: user.userId,
+//     });
+
+//     return Response.json({ message: "Ok" });
+//   } catch (error) {
+//     console.log(error);
+//     return Response.json({ message: "Internal server error" }, { status: 500 });
+//   }
+// };
+
 export const POST = async (req: NextRequest) => {
   try {
-    const emailPayload = (await req.json()) as UnipileIncomingEmail;
+    const email = (await req.json()) as UnipileIncomingEmail;
 
-    const unipileAccountId = emailPayload.account_id;
-
-    const user = await fetchQuery(api.integrations.getUserId, {
-      accountId: unipileAccountId,
-    });
-
-    if (!user) {
+    if (!email) {
       return Response.json(
         { message: "Unable to process this email" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
-    // 2. Handle Subcription related emails
-    const { isSubscription } = await isSubscriptionEmail({
-      email_html: emailPayload.body,
-      model,
+    const workflow = await fetchMutation(api.workflow.kickoffWebhookWorkflow, {
+      subject: email.subject,
+      email_html: email.body,
+      account_id: email.account_id,
+      emailIdentifier: email.email_id,
+      email_plain_text: email.body_plain,
+      sender_email: email.from_attendee.identifier,
+      sender_name: email.from_attendee.display_name,
     });
 
-    if (isSubscription) {
-      const subscription = await emailToObject({
-        model,
-        email_html: emailPayload.body,
-        subject: emailPayload.subject,
-        userId: user.userId,
-      });
-
-      // store subscription
-      await fetchMutation(api.subscriptions.create, subscription);
-
-      // Analytics
-      const serviceUrl = subscription.service_url;
-
-      const storeDomain = await fetchMutation(
-        api.webhook.storeDomainAnalytics,
-        {
-          service_url: serviceUrl,
-          userId: user.userId,
-        }
-      );
-    }
-
-    // 3. Execute user defined rules on the email
-    const storedRules = await fetchQuery(api.webhook.listRules, {
-      userId: user.userId,
-    });
-
-    return Response.json({ message: "Ok" });
+    return Response.json(
+      {
+        message: "Processing email",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return Response.json({ message: "Internal server error" }, { status: 500 });
