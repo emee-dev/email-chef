@@ -76,7 +76,7 @@ function FeatureIcon({
   text,
   delay,
 }: {
-  icon: any;
+  icon: React.ElementType;
   text: string;
   delay: number;
 }) {
