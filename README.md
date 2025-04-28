@@ -1,4 +1,4 @@
-<!-- [![](apps/web/app/opengraph-image.png)](https://www.getinboxzero.com) -->
+[![](public/landing.png)](https://www.getinboxzero.com)
 
 <p align="center">
   <a href="https://email-chef.vercel.app/">

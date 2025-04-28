@@ -15,7 +15,6 @@ import {
 import {
   FolderIcon,
   LayoutDashboardIcon,
-  ListIcon,
   Mail,
   SearchIcon,
   SettingsIcon,
@@ -35,11 +34,11 @@ const data = {
       url: "/dashboard/ai-assistant",
       icon: UsersIcon,
     },
-    {
-      title: "Cold Email Blocker",
-      url: "#",
-      icon: ListIcon,
-    },
+    // {
+    //   title: "Cold Email Blocker",
+    //   url: "#",
+    //   icon: ListIcon,
+    // },
     {
       title: "Folders",
       url: "/dashboard/folders",

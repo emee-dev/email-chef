@@ -2,6 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import unipile from "@/lib/unipile";
 import { fetchMutation } from "convex/nextjs";
+import pRetry from "p-retry";
 
 export const dynamic = "force-dynamic";
 
@@ -41,11 +42,22 @@ export const POST = async (req: Request) => {
     // Not validated so it could be anything
     const userEmail = data.connection_params.mail.id;
 
-    const result = await fetchMutation(api.integrations.create, {
-      userId: userId as Id<"users">,
-      accountId: unipileAccountId,
-      email: userEmail,
-    });
+    const storeUser = async () => {
+      const result = await fetchMutation(api.integrations.create, {
+        userId: userId as Id<"users">,
+        accountId: unipileAccountId,
+        email: userEmail,
+      });
+
+      if (!result) {
+        throw new Error("Could not store record, retrying");
+      }
+
+      return result;
+    };
+
+    // To ensure it is retried
+    await pRetry(storeUser, { retries: 5 });
 
     return Response.json(
       { msg: "User account is linked successfully" },

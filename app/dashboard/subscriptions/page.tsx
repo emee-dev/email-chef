@@ -1,11 +1,10 @@
 "use client";
 
 import { SubscriptionTable } from "@/components/subscriptions-table";
-import { usePaginatedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { subs } from "./subs";
-import { useContext } from "react";
 import { UnipileContext } from "@/provider/unipile-context";
+import { usePaginatedQuery } from "convex/react";
+import { useContext } from "react";
 
 export default function Page() {
   const unipile = useContext(UnipileContext);

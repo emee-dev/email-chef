@@ -6,6 +6,7 @@ import { Bot, Calendar, Clock, CreditCard, MailCheck } from "lucide-react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { pacifico } from "./fonts";
+import Link from "next/link";
 
 const MotionDiv = dynamic(
   () => import("framer-motion").then((mod) => mod.motion.div),
@@ -231,8 +232,7 @@ export default function HeroSection() {
               >
                 <p className="text-base sm:text-lg md:text-xl text-white/50 mb-10 md:mb-14 leading-relaxed font-light tracking-wide max-w-2xl mx-auto px-4 font-geist">
                   Intelligent email management that tracks subscriptions and
-                  automates repetitive tasks with custom cron jobs for your
-                  inbox.
+                  automates repetitive tasks with AI for your inbox.
                 </p>
               </MotionDiv>
 
@@ -264,9 +264,12 @@ export default function HeroSection() {
                 animate="visible"
                 className="mb-16 md:mb-20 "
               >
-                <button className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full text-white font-medium text-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all duration-300 transform hover:scale-105 font-geist">
+                <Link
+                  href="/dashboard"
+                  className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full text-white font-medium text-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all duration-300 transform hover:scale-105 font-geist"
+                >
                   Get Started Free
-                </button>
+                </Link>
               </MotionDiv>
 
               <MotionDiv

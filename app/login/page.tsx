@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { useAuthActions, useAuthToken } from "@convex-dev/auth/react";
-import { Fingerprint, GalleryVerticalEnd } from "lucide-react";
+import Lottie from "lottie-react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
+import LoginAnimation from "@/public/login.json";
 
 export default function AuthPage() {
   const { signIn } = useAuthActions();
@@ -105,7 +107,7 @@ export default function AuthPage() {
                       ? "Login"
                       : "Sign Up"}
                 </Button>
-                <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                {/* <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                   <span className="relative z-10 bg-background px-2 text-muted-foreground">
                     Or continue with
                   </span>
@@ -118,7 +120,7 @@ export default function AuthPage() {
                 >
                   <Fingerprint className="size-4 mr-1" />
                   Sign in anonymously
-                </Button>
+                </Button> */}
               </div>
               <div className="text-center text-sm">
                 {flow === "signIn"
@@ -140,11 +142,12 @@ export default function AuthPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img
+        {/* <img
           src="/placeholder.svg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        /> */}
+        <Lottie className="" animationData={LoginAnimation} loop={true} />
       </div>
     </div>
   );
