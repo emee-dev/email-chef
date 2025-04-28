@@ -19,27 +19,36 @@ import { useMutation, useQuery } from "convex/react";
 import { X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 
+// const examplePrompts = [
+//   {
+//     value: "urgent",
+//     label: 'Label urgent emails as "Urgent"',
+//     content: 'Label urgent emails as "Urgent"',
+//   },
+//   {
+//     value: "newsletter",
+//     label: 'Label newletters as "Newletter" and archive them.',
+//     content: 'Label newletters as "Newletter" and archive them.',
+//   },
+//   {
+//     value: "marketing",
+//     label: 'Label marketing emails as "Marketing" and archive them.',
+//     content: 'Label marketing emails as "Marketing" and archive them.',
+//   },
+//   {
+//     value: "receipts",
+//     label: 'Label reciepts as "Reciept" and forward them to cfo@company.com',
+//     content: 'Label reciepts as "Reciept" and forward them to cfo@company.com',
+//   },
+//   {
+//     value: "cold-emails",
+//     label:
+//       "Reply to cold emails by telling them to check out EmailChef. Then move it spam.",
+//     content:
+//       "Reply to cold emails by telling them to check out EmailChef. Then move it spam.",
+//   },
+// ];
 const examplePrompts = [
-  {
-    value: "urgent",
-    label: 'Label urgent emails as "Urgent"',
-    content: 'Label urgent emails as "Urgent"',
-  },
-  {
-    value: "newsletter",
-    label: 'Label newletters as "Newletter" and archive them.',
-    content: 'Label newletters as "Newletter" and archive them.',
-  },
-  {
-    value: "marketing",
-    label: 'Label marketing emails as "Marketing" and archive them.',
-    content: 'Label marketing emails as "Marketing" and archive them.',
-  },
-  {
-    value: "receipts",
-    label: 'Label reciepts as "Reciept" and forward them to cfo@company.com',
-    content: 'Label reciepts as "Reciept" and forward them to cfo@company.com',
-  },
   {
     value: "cold-emails",
     label:
@@ -94,7 +103,8 @@ const AIRulesPage = () => {
                 How AI assistant should handle incoming emails.
               </h2>
               <span className="text-sm  text-muted-foreground">
-                Write a prompt for the assistant to follow
+                Write a prompt for the assistant to follow. AI is currently able
+                to send email, reply email and delete email.
               </span>
             </div>
 
