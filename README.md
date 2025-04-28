@@ -116,3 +116,41 @@ pnpm run dev
 ```
 
 ### Overview of Architecture
+
+This project processes incoming user emails efficiently and intelligently using **Convex Durable Workflows** and **Unipile** integration.
+
+1. **User Email Integration via Unipile**
+
+   - Users connect their Gmail accounts to the app through **Unipile**.
+   - Whenever a new email is received, **Unipile** sends a **Webhook** to our backend with email data (subject, sender, HTML content, etc.).
+
+2. **Webhook Handling with Convex**
+
+   - The webhook triggers a **Convex Mutation** called `kickoffWebhookWorkflow`.
+   - This mutation starts a **Durable Workflow** (`handleEmailWorkflow`) to process the email data reliably and resiliently.
+
+3. **Workflow Processing Steps**
+   - **User Identification**: Find the corresponding user in the database using the `accountId` from Unipile.
+   - **Subscription Detection**:
+     - An action (`isSubscription`) checks if the email is likely a subscription email (like a newsletter).
+     - If yes, it parses the email into a `SubscriptionEmailObject` and stores subscription details.
+   - **Analytics Storage**:
+     - Saves domain analytics for services users interact with via emails.
+   - **Email Categorization**:
+     - Uses user-defined categories to classify the incoming email using AI (`categorizeEmail` action).
+     - Stores categorized analytics linked to the sender.
+   - **Custom Rule Execution**:
+     - Fetches user-specific automation rules.
+     - Triggers AI automations (`aiAutomation`) based on these rules (e.g., auto-responding, tagging emails, etc.).
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology           | Purpose                                        |
+| -------------------- | ---------------------------------------------- |
+| **Convex**           | Durable workflows, database operations         |
+| **Unipile**          | Email integration and webhook events           |
+| **TypeScript**       | Type safety across backend workflows           |
+| **AI Agents**        | Classify and automate email handling           |
+| **Durable Workflow** | Resilient and recoverable processing of emails |
